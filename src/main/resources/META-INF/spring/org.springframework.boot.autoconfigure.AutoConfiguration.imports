@@ -1,0 +1,2 @@
+cn.ffgaff.spring.boot.cache.CacheConfiguration
+cn.ffgaff.spring.boot.cache.GaffRedisCacheAutoConfiguration

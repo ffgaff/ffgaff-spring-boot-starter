@@ -1,0 +1,7 @@
+#app
+spring:
+  profiles:
+    active:
+logging:
+  level:
+    root: info

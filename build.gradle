@@ -1,0 +1,193 @@
+plugins {
+    id 'java-library'
+//    id 'maven'
+//    id 'jacoco'
+//    id 'signing'
+    id 'maven-publish'
+//    id 'org.springframework.boot' version "${SPRING_VERSION}"
+//    id 'io.spring.dependency-management' version "${DEPENDENCY_VERSION}"
+}
+//ext {
+////            springBootVersion = '2.7.13'
+//    springBootVersion = '3.2.0'
+////            springCloudVersion = 'Hoxton.SR8'
+////            springCloudAlibabaVersion = '2.2.5.RELEASE'
+////            mysqlVersion = '8.0.25'
+//    lombokVersion = '1.18.20'
+//}
+group = 'cn.ffgaff'
+version = '1.0-SNAPSHOT'
+
+def localMavenRepo = 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+
+repositories {
+    mavenLocal()
+    maven {
+        name "Alibaba"; url = 'https://maven.aliyun.com/nexus/content/groups/public/'
+    }
+    maven {
+        name "apache"; url = 'https://repo.maven.apache.org/maven2'
+    }
+
+    maven {
+        name "gradle"; url = 'https://plugins.gradle.org/m2/'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    compileOnly 'org.springframework.boot:spring-boot-starter-aop:3.1.2'
+    compileOnly 'org.springframework.boot:spring-boot-starter-data-redis-reactive:3.1.2'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+    compileOnly 'org.projectlombok:lombok:1.18.28'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.28'
+    testCompileOnly 'org.projectlombok:lombok:1.18.28'
+
+    implementation "com.github.ben-manes.caffeine:caffeine:3.1.8"
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'cn.hutool:hutool-all:5.8.25'
+
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// 发布 jar 包, 执行 gradle uploadArchives(或者 ./gradlew uploadArchives) 以发布 jar 包。
+//
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            groupId "${group}"
+//            artifactId project.name
+//            version "${version}"
+//        }
+//
+//    }
+//    repositories {
+//        mavenLocal {
+//            url(localMavenRepo)
+//        }
+//    }
+//}
+
+// *************************************
+// 单元测试相关
+// *************************************
+//
+//jacocoTestReport {
+//    reports {
+//        xml.enabled false
+//        html.enabled true
+//    }
+//}
+//check.dependsOn jacocoTestReport
+//
+//
+//tasks.register('copyTestResources', Copy) {
+//    from "${projectDir}/src/test/resources"
+//    into "${buildDir}/classes/test"
+//}
+//processTestResources.dependsOn copyTestResources
+
+//
+// *************************************
+// 发布到 maven 中央仓库
+// *************************************
+
+java{
+    withJavadocJar()
+    withSourcesJar()
+}
+//task sourcesJar(type: Jar) {
+//    from sourceSets.main.allJava
+//    archiveClassifier = 'sources'
+//
+//}
+//
+//task javadocJar(type: Jar) {
+//    from javadoc.destinationDir
+//    archiveClassifier = 'javadoc'
+//}
+
+tasks.withType(Javadoc) {
+    failOnError false
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+    options.addStringOption('charSet', 'UTF-8')
+}
+////
+//javadoc {
+//    options {
+//        encoding "UTF-8"
+//        charSet 'UTF-8'
+//    }
+//}
+
+publishing {
+    publications {
+//        relocation(MavenPublication){
+//
+//        }
+        mavenJava(MavenPublication) {
+            groupId "${group}"
+            artifactId project.name
+            version "${version}"
+            from components.java
+//            artifact sourcesJar
+//            artifact javadocJar
+
+            // https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html
+            pom {
+                name = "ffgaff"
+                description = "ffgaff 是一款封装库，提供一系列小工具"
+//                url = "https://github.com/itguang/easy-excel"
+//                licenses {
+//                    license {
+//                        name = "The Apache License, Version 2.0"
+//                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+//                    }
+//                }
+                developers {
+                    developer {
+                        id = "ffgaff"
+                        name = "高玉蓬"
+                        email = "253817759@qq.com"
+                    }
+                }
+//                scm {
+//                    connection = "scm:git:https://github.com/itguang/easy-excel"
+//                    developerConnection = "scm:git:https://github.com/itguang/easy-excel"
+//                    url = "https://github.com/itguang/easy-excel"
+//                }
+            }
+        }
+    }
+    repositories {
+        mavenLocal {
+            url(localMavenRepo)
+        }
+//        maven {
+//            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+//            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+//            // 如果version以SNAPSHOT结尾就会上传到快照仓库，如果不是就上传到release仓库
+//            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+//            credentials {
+//                username = "${NEXUS_USERNAME}"
+//                password = "${NEXUS_PASSWORD}"
+//            }
+//        }
+
+    }
+}
+
+
+//
+//signing {
+//    sign publishing.publications.mavenJava
+//}
